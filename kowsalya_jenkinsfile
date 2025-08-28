@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+    triggers{
+        githubPush()
+    }
+    tools{
+        maven 'Maven'
+    }
+    stages{
+        stage('github checkout'){
+            steps{
+                git branch: 'main', url: 'https://github.com/Kowsalya-7/addressbook-project.git'
+            }
+        }
+        stage('compile'){
+            steps{
+                sh 'mvn compile'
+            }
+        }
+        stage('test'){
+            steps{
+                sh 'mvn test'
+            }
+        }
+        stage('package'){
+            steps{
+                sh 'mvn package'
+            }
+        }
+        stage('Deploy on tomcat'){
+            steps{
+                sh 'sudo mv /var/lib/jenkins/workspace/cicd/target/addressbook.war /home/ubuntu/apache-tomcat-8.5.100/webapps/addressbook.war'
+            }
+        }
+    }
+}
